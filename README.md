@@ -15,95 +15,87 @@ Configurable bucket tags
 Terraform variables and outputs
 Environment-based project structure
 📁 Project Structure
-terraform-S3-bucket/
-│
-├── environments/
-│   └── dev/
-│       ├── main.tf
-│       ├── outputs.tf
-│       ├── provider.tf
-│       ├── terraform.tfvars
-│       └── variables.tf
-│
-├── module/
-│   └── s3/
-│       ├── main.tf
-│       ├── output.tf
-│       └── variable.tf
-│
-├── main.tf
-├── output.tf
-├── provider.tf
-├── variable.tf
-└── README.md
+
+environments/
+
+dev/
+main.tf
+outputs.tf
+provider.tf
+terraform.tfvars
+variables.tf
+
+module/
+
+s3/
+main.tf
+output.tf
+variable.tf
+
+main.tf
+
+output.tf
+
+provider.tf
+
+variable.tf
+
+README.md
 
 🏗️ Architecture
-Terraform
-    |
-    v
-environments/dev
-    |
-    v
-S3 Module
-    |
-    v
-AWS S3 Bucket
-    |
-    +-- Versioning
-    |
-    +-- AES256 Encryption
-    |
-    +-- Public Access Blocking
 
+The project follows a reusable Terraform module architecture.
+
+Flow:
+
+environments/dev → S3 Module → AWS S3 Bucket
+
+The S3 bucket is configured with:
+
+Versioning
+AES256 server-side encryption
+Public access blocking
+Custom tags
 🔧 How It Works
 
 The development environment uses the reusable S3 module.
 
-module "s3" {
-  source = "../../module/s3"
+The module receives configuration values such as:
 
-  bucket_name       = var.bucket_name
-  bucket_tags       = var.bucket_tags
-  versioning_status = var.versioning_status
-  Encryption        = var.Encryption
-}
+Bucket name
+Bucket tags
+Versioning status
+Encryption type
 
-
-The module creates and configures the AWS S3 bucket.
+The module then creates and configures the AWS S3 bucket.
 
 🔐 S3 Security
 Versioning
 
-S3 bucket versioning is enabled:
-
-versioning_status = "Enabled"
+S3 bucket versioning is enabled.
 
 Server-Side Encryption
 
-The bucket uses AES256 server-side encryption:
-
-Encryption = "AES256"
+The bucket uses AES256 server-side encryption.
 
 Public Access Blocking
 
-Public access is blocked using:
+Public access is blocked using all four S3 public access block settings:
 
-block_public_acls       = true
-block_public_policy     = true
-ignore_public_acls      = true
-restrict_public_buckets = true
+Block public ACLs
+Block public bucket policies
+Ignore public ACLs
+Restrict public buckets
 
-
-These settings help prevent accidental public exposure of the bucket.
+These settings help prevent accidental public exposure of the S3 bucket.
 
 ⚙️ Configuration
 
-Development environment configuration is stored in:
+Development configuration is stored in:
 
 environments/dev/terraform.tfvars
 
-
-Example:
+Example configuration:
 
 bucket_name = "2star-s3"
 
@@ -118,10 +110,13 @@ versioning_status = "Enabled"
 Encryption        = "AES256"
 
 🛠️ Prerequisites
-Terraform
-AWS CLI
-AWS account
-AWS credentials
+
+Before deploying this project, make sure you have:
+
+Terraform installed
+AWS CLI installed
+An AWS account
+AWS credentials configured
 Required AWS IAM permissions
 
 Check Terraform:
@@ -134,25 +129,25 @@ Check AWS authentication:
 aws sts get-caller-identity
 
 🚀 Deployment
-1. Navigate to the Project
+Step 1: Go to the Project
 cd terraform-S3-bucket
 
-2. Go to the Development Environment
+Step 2: Navigate to Development Environment
 cd environments/dev
 
-3. Initialize Terraform
+Step 3: Initialize Terraform
 terraform init
 
-4. Format the Configuration
+Step 4: Format Terraform Files
 terraform fmt -recursive
 
-5. Validate the Configuration
+Step 5: Validate Configuration
 terraform validate
 
-6. Review the Plan
+Step 6: Review Terraform Plan
 terraform plan
 
-7. Apply the Configuration
+Step 7: Apply Configuration
 terraform apply
 
 
@@ -160,75 +155,64 @@ Enter yes when Terraform asks for confirmation.
 
 📤 Outputs
 
-After deployment:
+After deployment, view the outputs:
 
 terraform output
 
 
-Available outputs include:
+The project provides information such as:
 
 bucket_name
 bucket_arn
-
 🗑️ Destroy Infrastructure
 
-To remove the infrastructure:
+To remove the infrastructure created by Terraform:
 
 terraform destroy
 
 
-Warning: Review the resources carefully before confirming the destroy operation.
+Warning: Carefully review the resources before confirming the destroy operation.
 
 🧩 S3 Module
 
 The reusable S3 module is located at:
 
 module/s3/
-├── main.tf
-├── variable.tf
-└── output.tf
 
-main.tf
+The module contains:
 
-Contains the AWS S3 resources and configuration.
+main.tf — AWS S3 resources and configuration
+variable.tf — Module input variables
+output.tf — Module outputs
+Module Variables
 
-variable.tf
-
-Defines the module input variables:
+The module accepts:
 
 bucket_name
 bucket_tags
 versioning_status
 Encryption
+Module Outputs
 
-output.tf
-
-Defines the module outputs:
+The module provides:
 
 bucket_name
 bucket_arn
-
 🌍 Environment Structure
 
-The current environment is:
+The project currently contains a development environment:
 
-environments/
-└── dev/
-    ├── main.tf
-    ├── outputs.tf
-    ├── provider.tf
-    ├── terraform.tfvars
-    └── variables.tf
+environments/dev/
 
+This structure can later be extended:
 
-Additional environments can be added later:
+dev
+staging
+prod
 
-environments/
-├── dev/
-├── staging/
-└── prod/
+Each environment can use the same reusable S3 module with different configuration values.
 
-📚 Terraform Concepts
+📚 Terraform Concepts Demonstrated
 
 This project demonstrates:
 
@@ -243,7 +227,7 @@ S3 versioning
 Server-side encryption
 Public access blocking
 Environment-based infrastructure
-Reusable modules
+Reusable Terraform modules
 🔒 Recommended Improvements
 
 For production environments, consider adding:
