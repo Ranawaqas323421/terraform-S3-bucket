@@ -15,6 +15,7 @@ Configurable bucket tags
 Terraform variables and outputs
 Environment-based project structure
 📁 Project Structure
+
 terraform-S3-bucket/
 │
 ├── environments/
