@@ -38,33 +38,26 @@ terraform-S3-bucket/
 └── README.md
 
 🏗️ Architecture
-
-The project follows a reusable module-based Terraform architecture:
-
-                    Terraform
-                        │
-                        ▼
-              environments/dev
-                        │
-                        │
-                        ▼
-                   S3 Module
-                        │
-                        │
-                        ▼
-                 AWS S3 Bucket
-                        │
-          ┌─────────────┼─────────────┐
-          ▼             ▼             ▼
-     Versioning    Encryption    Public Access
-                                    Blocking
-
-
-The dev environment uses the reusable S3 module and provides environment-specific configuration.
+Terraform
+    |
+    v
+environments/dev
+    |
+    v
+S3 Module
+    |
+    v
+AWS S3 Bucket
+    |
+    +-- Versioning
+    |
+    +-- AES256 Encryption
+    |
+    +-- Public Access Blocking
 
 🔧 How It Works
 
-The development environment calls the S3 module:
+The development environment uses the reusable S3 module.
 
 module "s3" {
   source = "../../module/s3"
@@ -76,33 +69,24 @@ module "s3" {
 }
 
 
-The module is responsible for creating and configuring the S3 bucket.
+The module creates and configures the AWS S3 bucket.
 
-🔐 S3 Security Configuration
+🔐 S3 Security
+Versioning
 
-The S3 bucket includes multiple security configurations.
-
-🔄 Versioning
-
-Bucket versioning is enabled:
+S3 bucket versioning is enabled:
 
 versioning_status = "Enabled"
 
+Server-Side Encryption
 
-Versioning allows multiple versions of objects to be maintained and can help recover from accidental changes or deletions.
-
-🔒 Server-Side Encryption
-
-The project uses AES256 server-side encryption:
+The bucket uses AES256 server-side encryption:
 
 Encryption = "AES256"
 
+Public Access Blocking
 
-This provides encryption for objects stored in the S3 bucket.
-
-🛡️ Public Access Blocking
-
-Public access to the S3 bucket is blocked using:
+Public access is blocked using:
 
 block_public_acls       = true
 block_public_policy     = true
@@ -110,11 +94,11 @@ ignore_public_acls      = true
 restrict_public_buckets = true
 
 
-These settings help prevent accidental public exposure of the S3 bucket.
+These settings help prevent accidental public exposure of the bucket.
 
 ⚙️ Configuration
 
-Environment-specific configuration is stored in:
+Development environment configuration is stored in:
 
 environments/dev/terraform.tfvars
 
@@ -134,14 +118,11 @@ versioning_status = "Enabled"
 Encryption        = "AES256"
 
 🛠️ Prerequisites
-
-Before deploying this project, make sure you have:
-
-Terraform installed
-AWS CLI installed
-An AWS account
-AWS credentials configured
-Appropriate AWS IAM permissions
+Terraform
+AWS CLI
+AWS account
+AWS credentials
+Required AWS IAM permissions
 
 Check Terraform:
 
@@ -153,63 +134,54 @@ Check AWS authentication:
 aws sts get-caller-identity
 
 🚀 Deployment
-1. Clone the Repository
-git clone <repository-url>
+1. Navigate to the Project
 cd terraform-S3-bucket
 
-2. Navigate to the Development Environment
+2. Go to the Development Environment
 cd environments/dev
 
 3. Initialize Terraform
 terraform init
 
-4. Format Terraform Files
+4. Format the Configuration
 terraform fmt -recursive
 
 5. Validate the Configuration
 terraform validate
 
-6. Review the Terraform Plan
+6. Review the Plan
 terraform plan
 
 7. Apply the Configuration
 terraform apply
 
 
-Terraform will ask for confirmation before creating the infrastructure.
+Enter yes when Terraform asks for confirmation.
 
-📤 Terraform Outputs
+📤 Outputs
 
-After deployment, view the Terraform outputs using:
+After deployment:
 
 terraform output
 
 
-The project provides outputs such as:
+Available outputs include:
 
 bucket_name
 bucket_arn
 
-
-These outputs provide useful information about the created S3 bucket.
-
 🗑️ Destroy Infrastructure
 
-To remove the infrastructure created by Terraform:
+To remove the infrastructure:
 
 terraform destroy
 
 
-⚠️ Warning: Make sure you understand what resources will be deleted before confirming terraform destroy.
+Warning: Review the resources carefully before confirming the destroy operation.
 
-🧩 Terraform Module
+🧩 S3 Module
 
 The reusable S3 module is located at:
-
-module/s3/
-
-
-Its structure is:
 
 module/s3/
 ├── main.tf
@@ -218,7 +190,7 @@ module/s3/
 
 main.tf
 
-Contains the AWS S3 resources and their configuration.
+Contains the AWS S3 resources and configuration.
 
 variable.tf
 
@@ -238,7 +210,7 @@ bucket_arn
 
 🌍 Environment Structure
 
-The project currently contains a development environment:
+The current environment is:
 
 environments/
 └── dev/
@@ -249,46 +221,42 @@ environments/
     └── variables.tf
 
 
-The same structure can be extended for additional environments:
+Additional environments can be added later:
 
 environments/
 ├── dev/
 ├── staging/
 └── prod/
 
+📚 Terraform Concepts
 
-Each environment can use the same reusable S3 module with different configuration values.
+This project demonstrates:
 
-📚 Terraform Concepts Demonstrated
-
-This project demonstrates practical use of:
-
-Infrastructure as Code (IaC)
+Infrastructure as Code
 Terraform providers
 Terraform modules
 Input variables
 Output values
-.tfvars configuration
+.tfvars files
 AWS S3
-S3 bucket versioning
+S3 versioning
 Server-side encryption
 Public access blocking
 Environment-based infrastructure
-Reusable infrastructure components
+Reusable modules
 🔒 Recommended Improvements
 
-For production use, the project could be extended with:
+For production environments, consider adding:
 
 Remote Terraform state
 S3 backend
-Terraform state locking
+State locking
 Terraform version constraints
 AWS provider version constraints
 S3 lifecycle policies
 AWS KMS encryption
 CI/CD pipeline
 GitHub Actions
-Separate AWS environments or accounts
 IAM least-privilege policies
 Monitoring and logging
 👨‍💻 Author
